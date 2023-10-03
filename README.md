@@ -37,6 +37,12 @@ This utility is a Bash script designed to automate the process of testing HTTP b
     chmod +x run.sh
     ```
 
+4. Fix one testcase:
+
+    ```bash
+    echo -e "GET / HTTP/1.1\r\nHost: example.com\n\n" > mixed-line-endings.txt
+    ```
+
 ## Usage
 
 ### Basic Usage
