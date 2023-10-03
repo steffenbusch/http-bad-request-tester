@@ -65,6 +65,14 @@ To specify multiple test cases using wildcards:
 ./run.sh --host arm.stbu.net --testcases "http0.9*"
 ```
 
+## About the Test Cases
+
+The test cases included in this utility vary in their adherence to HTTP protocol specifications. These test cases have been generated with the assistance of ChatGPT and cover a broad spectrum of request scenarios.
+
+**Note:** Not all the test cases represent "bad" or "malformed" requests according to the HTTP specifications. Some may be fully compliant requests, while others deliberately deviate from the standard to test how the server handles such cases.
+
+Please read through the test cases to understand their specifics before running them.
+
 ## Help
 
 For the usage guide:
