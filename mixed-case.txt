@@ -1,0 +1,4 @@
+GeT / HTtP/1.1
+hOsT: example.com
+
+
