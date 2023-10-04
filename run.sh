@@ -111,4 +111,3 @@ for file in $(find . -maxdepth 1 -name "$testcases" -type f | sort); do
     # Increment the counter
     ((counter++))
 done
-
