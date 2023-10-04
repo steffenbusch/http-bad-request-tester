@@ -25,19 +25,19 @@ while [ "$#" -gt 0 ]; do
   case "$1" in
     --host)
       host="$2"
-      shift 2
+      shift; shift
       ;;
     --port)
       port="$2"
-      shift 2
+      shift; shift
       ;;
     --ip)
       ip="$2"
-      shift 2
+      shift; shift
       ;;
     --testcases)
       testcases="$2"
-      shift 2
+      shift; shift
       ;;
     --overview)
       overview_report=true
