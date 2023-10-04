@@ -4,9 +4,11 @@
 usage() {
   echo "Usage: $0 [OPTIONS]"
   echo "Options:"
-  echo "  --host HOST       Specify the host to test against."
+  echo "  --host HOST       Specify the host to test against. Used as the Host header in requests."
   echo "  --port PORT       Specify the port to use. Default is 80."
+  echo "  --ip IP           Specify the IP address for the nc command. If not specified, the host is used."
   echo "  --testcases FILE  Specify the .txt file(s) for test cases. Supports wildcards."
+  echo "  --overview        Display an overview of filenames and HTTP response overviewes at the end."
   echo "  -h, --help        Show this help message."
   exit 1
 }
@@ -14,7 +16,9 @@ usage() {
 # Initialize variables
 host=""
 port=80
+ip=""
 testcases="*.txt"
+overview_report=false
 
 # Parse command-line options
 while [ "$#" -gt 0 ]; do
@@ -27,9 +31,17 @@ while [ "$#" -gt 0 ]; do
       port="$2"
       shift 2
       ;;
+    --ip)
+      ip="$2"
+      shift 2
+      ;;
     --testcases)
       testcases="$2"
       shift 2
+      ;;
+    --overview)
+      overview_report=true
+      shift
       ;;
     -h|--help)
       usage
@@ -71,6 +83,13 @@ if [ -z "$host" ]; then
     exit 1
 fi
 
+# Report file and temporary response output file creation when --overview was specified
+overview_file=$(mktemp)
+temp_reponse_out=$(mktemp)
+# Set up traps to clean up temporary files upon script exit or interruption
+trap 'rm -f "$overview_file"' EXIT INT TERM
+trap 'rm -f "$temp_reponse_out"' EXIT INT TERM
+
 # Counter for processed files
 counter=1
 
@@ -105,13 +124,26 @@ for file in $(find . -maxdepth 1 -name "$testcases" -type f | sort); do
     # Use a separator to delineate Request from Response
     printf -- "${bold}--- Server Response ---${reset}\n"
 
-    # Send the modified content using nc and capture the server's response
-    printf -- "%s" "$modified_content" | nc "$host" "$port"
+    # Send the modified content using nc, capture the server's response,
+    # and save it temporarily for extracting HTTP status
+        printf -- "%s" "$modified_content" | nc "${ip:-$host}" "$port" | tee "$temp_reponse_out"
+
+    # Extract and store HTTP status and filename for the overview
+    http_status=$(head -n 1 "$temp_reponse_out" | awk '{print $2}')
+    printf "%2d %-36s %s\n" "$counter" "$file" "$http_status" >> "$overview_file"
+
 
     # Print a separator line
-    # printf "\n============================================================\n\n"
     printf -- "\n\n"
 
     # Increment the counter
     ((counter++))
 done
+
+# Display overview if --overview was specified
+if [ "$overview_report" = true ]; then
+    echo -e "\n--- Overview ---"
+    while IFS= read -r line; do
+        echo "$line"
+    done < "$overview_file"
+fi
