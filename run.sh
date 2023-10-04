@@ -125,7 +125,7 @@ for file in $(find . -maxdepth 1 -name "$testcases" -type f | sort); do
 
   # Send the modified content using nc, capture the server's response,
   # and save it temporarily for extracting HTTP status
-  printf -- "%s" "$modified_content" | nc "${ip:-$host}" "$port" | tee "$temp_reponse_out"
+  printf -- "%s" "$modified_content" | nc "${ip:-$host}" "$port" |& tee "$temp_reponse_out"
 
   # Extract the HTTP status code if the response starts with "HTTP", or capture the entire first line otherwise,
   # then store the filename and HTTP status (or the first line of the response) for the overview.
