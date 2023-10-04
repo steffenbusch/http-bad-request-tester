@@ -4,8 +4,9 @@
 usage() {
   echo "Usage: $0 [OPTIONS]"
   echo "Options:"
-  echo "  --host HOST       Specify the host to test against."
+  echo "  --host HOST       Specify the host to test against. Used as the Host header in requests."
   echo "  --port PORT       Specify the port to use. Default is 80."
+  echo "  --ip IP           Specify the IP address for the nc command. If not specified, the host is used."
   echo "  --testcases FILE  Specify the .txt file(s) for test cases. Supports wildcards."
   echo "  --overview        Display an overview of filenames and HTTP response overviewes at the end."
   echo "  -h, --help        Show this help message."
@@ -15,6 +16,7 @@ usage() {
 # Initialize variables
 host=""
 port=80
+ip=""
 testcases="*.txt"
 overview_report=false
 
@@ -27,6 +29,10 @@ while [ "$#" -gt 0 ]; do
       ;;
     --port)
       port="$2"
+      shift 2
+      ;;
+    --ip)
+      ip="$2"
       shift 2
       ;;
     --testcases)
@@ -120,7 +126,7 @@ for file in $(find . -maxdepth 1 -name "$testcases" -type f | sort); do
 
     # Send the modified content using nc, capture the server's response,
     # and save it temporarily for extracting HTTP status
-    printf -- "%s" "$modified_content" | nc $host $port | tee "$temp_reponse_out"
+        printf -- "%s" "$modified_content" | nc "${ip:-$host}" "$port" | tee "$temp_reponse_out"
 
     # Extract and store HTTP status and filename for the overview
     http_status=$(head -n 1 "$temp_reponse_out" | awk '{print $2}')
