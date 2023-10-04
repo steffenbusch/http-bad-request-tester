@@ -87,7 +87,11 @@ for file in $(find . -maxdepth 1 -name "$testcases" -type f | sort); do
     file=${file#./}  # remove leading './' returned by find
 
     # Replace 'example.com' with the provided host and store it in a variable
-    modified_content=$(sed "s/example.com/$host/g" "$file")
+    # Append a marker '@@@' to ensure trailing newlines are included
+    modified_content=$(sed "s/example.com/$host/g" "$file"; echo '@@@')
+
+    # Remove the marker '@@@' before sending the request
+    modified_content=${modified_content%@@@}
 
     # Print the name and modified content of the file
     printf -- "${bold}======= Sending File: ${red}%s${reset}${bold} [Test %d/%d] =======${reset}\n\n" "$file" "$counter" "$total_files"
