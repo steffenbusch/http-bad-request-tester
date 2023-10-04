@@ -96,7 +96,11 @@ for file in $(find . -maxdepth 1 -name "$testcases" -type f | sort); do
     # Print the name and modified content of the file
     printf -- "${bold}======= Sending File: ${red}%s${reset}${bold} [Test %d/%d] =======${reset}\n\n" "$file" "$counter" "$total_files"
     printf -- "${bold}--- Request (Modified Content of the File) ---${reset}\n"
-    printf -- "%s\n\n" "$modified_content"
+    if [ ${#modified_content} -gt 250 ]; then
+      printf -- "%s...(%d more characters)\n\n" "${modified_content:0:250}" $((${#modified_content}-250))
+    else
+      printf -- "%s\n\n" "$modified_content"
+    fi
 
     # Use a separator to delineate Request from Response
     printf -- "${bold}--- Server Response ---${reset}\n"
@@ -105,7 +109,7 @@ for file in $(find . -maxdepth 1 -name "$testcases" -type f | sort); do
     printf -- "%s" "$modified_content" | nc "$host" "$port"
 
     # Print a separator line
-#    printf "\n============================================================\n\n"
+    # printf "\n============================================================\n\n"
     printf -- "\n\n"
 
     # Increment the counter
