@@ -1,5 +1,5 @@
 GET / HTTP/1.1
-Host: arm.stbu.net
+Host: example.com
 
 
 
