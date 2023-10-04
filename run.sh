@@ -124,7 +124,7 @@ for file in $(find . -maxdepth 1 -name "$testcases" -type f | sort); do
 
     # Extract and store HTTP status and filename for the overview
     http_status=$(head -n 1 "$temp_reponse_out" | awk '{print $2}')
-    printf "%-36s %s\n" "$file" "$http_status" >> "$overview_file"
+    printf "%2d %-36s %s\n" "$counter" "$file" "$http_status" >> "$overview_file"
 
 
     # Print a separator line
