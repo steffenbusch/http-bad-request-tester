@@ -102,7 +102,7 @@ for file in $(find . -maxdepth 1 -name "$testcases" -type f | sort); do
     printf -- "${bold}--- Server Response ---${reset}\n"
 
     # Send the modified content using nc and capture the server's response
-    printf -- "%s" "$modified_content" | nc $host $port
+    printf -- "%s" "$modified_content" | nc "$host" "$port"
 
     # Print a separator line
 #    printf "\n============================================================\n\n"
